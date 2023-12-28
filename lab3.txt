@@ -1,0 +1,52 @@
+//Topics to be covered : File Handling
+//Exercise based on above Topics:
+//1. Write a C program Count total no of operators in a file. [Taking file from user].
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <ctype.h>
+
+int isOperator(char c) {
+    char operators[] = "+-*/%=&|<>^!";
+
+    for (int i = 0; operators[i] != '\0'; i++) {
+        if (c == operators[i]) {
+            return 1; // It's an operator
+        }
+    }
+    return 0; // It's not an operator
+}
+
+int main() {
+    char filename[100];
+    printf("Enter the name of the file: ");
+    scanf("%s", filename);
+
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("File not found or cannot be opened.\n");
+        return 1;
+    }
+
+    int operatorCount = 0;
+    char c;
+
+    while ((c = fgetc(file)) != EOF) {
+        if (isOperator(c)) {
+            operatorCount++;
+        }
+    }
+
+    fclose(file);
+
+    printf("Total number of operators in the file: %d\n", operatorCount);
+
+    return 0;
+}

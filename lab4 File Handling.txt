@@ -1,0 +1,44 @@
+//Topics to be covered : File Handling
+//Exercise based on above Topics:
+//1. Write a C program Count total occurrence of each character in a given file. [Taking file
+//from user]
+
+
+
+
+
+
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    char filename[100];
+    printf("Enter the name of the file: ");
+    scanf("%s", filename);
+
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("File not found or cannot be opened.\n");
+        return 1;
+    }
+
+    int charCount[256] = {0}; // Initialize an array to store character counts
+
+    char c;
+
+    while ((c = fgetc(file)) != EOF) {
+        charCount[(unsigned char)c]++; // Increment the count for the character
+    }
+
+    fclose(file);
+
+    printf("Character Count in the file:\n");
+    
+    for (int i = 0; i < 256; i++) {
+        if (charCount[i] > 0) {
+            printf("'%c' (%d): %d\n", (char)i, i, charCount[i]);
+        }
+    }
+
+    return 0;
+}

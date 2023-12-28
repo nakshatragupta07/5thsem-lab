@@ -1,0 +1,39 @@
+//Topic to be covered : Basics of C
+//Exercise Based on above Topics:
+//1. Write a C program to identify whether given string is keyword or not.
+
+
+
+
+#include <stdio.h>
+#include <string.h>
+
+int isKeyword(char *str) {
+    char keywords[][32] = {"auto", "break", "case", "char", "const", "continue", "default", "do",
+                            "double", "else", "enum", "extern", "float", "for", "goto", "if",
+                            "int", "long", "register", "return", "short", "signed", "sizeof", "static",
+                            "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while"};
+
+    int i;
+    for (i = 0; i < sizeof(keywords) / sizeof(keywords[0]); i++) {
+        if (strcmp(str, keywords[i]) == 0) {
+            return 1; // It's a keyword
+        }
+    }
+    return 0; // It's not a keyword
+}
+
+int main() {
+    char input[32];
+
+    printf("Enter a word to check if it's a C keyword: ");
+    scanf("%s", input);
+
+    if (isKeyword(input)) {
+        printf("%s is a C keyword.\n", input);
+    } else {
+        printf("%s is not a C keyword.\n", input);
+    }
+
+    return 0;
+}

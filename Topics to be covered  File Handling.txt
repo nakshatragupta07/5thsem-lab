@@ -1,0 +1,56 @@
+//Topics to be covered : File Handling
+//Exercise based on above Topics:
+//1. Write a C program Count total no. of keywords in a file. [Taking file from user].
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int isKeyword(char *str) {
+    char keywords[][32] = {"auto", "break", "case", "char", "const", "continue", "default", "do",
+                            "double", "else", "enum", "extern", "float", "for", "goto", "if",
+                            "int", "long", "register", "return", "short", "signed", "sizeof", "static",
+                            "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while"};
+
+    int i;
+    for (i = 0; i < sizeof(keywords) / sizeof(keywords[0]); i++) {
+        if (strcmp(str, keywords[i]) == 0) {
+            return 1; // It's a keyword
+        }
+    }
+    return 0; // It's not a keyword
+}
+
+int main() {
+    char filename[100];
+    printf("Enter the name of the file: ");
+    scanf("%s", filename);
+
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("File not found or cannot be opened.\n");
+        return 1;
+    }
+
+    char word[100];
+    int keywordCount = 0;
+
+    while (fscanf(file, "%s", word) == 1) {
+        if (isKeyword(word)) {
+            keywordCount++;
+        }
+    }
+
+    fclose(file);
+
+    printf("Total number of keywords in the file: %d\n", keywordCount);
+
+    return 0;
+}

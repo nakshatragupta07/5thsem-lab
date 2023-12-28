@@ -1,0 +1,105 @@
+//Topics to be covered : Data structure and file handing
+//Exercise based on above Topics:
+//1. Write a C program to insert, delete and display the entries in Symbol Table.
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure to represent a symbol entry
+struct SymbolEntry {
+    char name[50];
+    int value;
+    // You can add more fields as needed
+};
+
+// Function to insert a new entry into the symbol table
+void insertEntry(struct SymbolEntry table[], int *size, char name[], int value) {
+    if (*size >= 100) {
+        printf("Symbol table is full. Cannot insert.\n");
+        return;
+    }
+
+    strcpy(table[*size].name, name);
+    table[*size].value = value;
+    (*size)++;
+    printf("Entry inserted: %s = %d\n", name, value);
+}
+
+// Function to delete an entry from the symbol table
+void deleteEntry(struct SymbolEntry table[], int *size, char name[]) {
+    int i;
+    for (i = 0; i < *size; i++) {
+        if (strcmp(table[i].name, name) == 0) {
+            // Found the entry to delete
+            for (int j = i; j < (*size - 1); j++) {
+                // Shift entries to fill the gap
+                strcpy(table[j].name, table[j + 1].name);
+                table[j].value = table[j + 1].value;
+            }
+            (*size)--;
+            printf("Entry deleted: %s\n", name);
+            return;
+        }
+    }
+    printf("Entry not found: %s\n", name);
+}
+
+// Function to display all entries in the symbol table
+void displayTable(struct SymbolEntry table[], int size) {
+    if (size == 0) {
+        printf("Symbol table is empty.\n");
+        return;
+    }
+
+    printf("Symbol Table:\n");
+    for (int i = 0; i < size; i++) {
+        printf("%s = %d\n", table[i].name, table[i].value);
+    }
+}
+
+int main() {
+    struct SymbolEntry symbolTable[100];
+    int size = 0;
+    int choice;
+    char name[50];
+    int value;
+
+    while (1) {
+        printf("\nSymbol Table Operations:\n");
+        printf("1. Insert Entry\n");
+        printf("2. Delete Entry\n");
+        printf("3. Display Table\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the variable name: ");
+                scanf("%s", name);
+                printf("Enter the value: ");
+                scanf("%d", &value);
+                insertEntry(symbolTable, &size, name, value);
+                break;
+            case 2:
+                printf("Enter the variable name to delete: ");
+                scanf("%s", name);
+                deleteEntry(symbolTable, &size, name);
+                break;
+            case 3:
+                displayTable(symbolTable, size);
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}

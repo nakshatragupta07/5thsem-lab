@@ -1,0 +1,1052 @@
+1. Translation:
+
+
+#include <graphics.h>
+
+void translate(int x[], int y[], int n, int tx, int ty) {
+    int i;
+
+    for (i = 0; i < n; i++) {
+        x[i] = x[i] + tx;
+        y[i] = y[i] + ty;
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x[] = {50, 100, 150, 50};
+    int y[] = {50, 50, 100, 150};
+    int n = sizeof(x) / sizeof(x[0]);
+
+    drawpoly(n, x, y);
+    
+    translate(x, y, n, 50, 50);
+
+    setcolor(RED);
+    drawpoly(n, x, y);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2. Rotation:
+
+
+
+
+#include <graphics.h>
+#include <math.h>
+
+void rotate(int x[], int y[], int n, float angle) {
+    int i;
+    float radian = angle * (3.14159 / 180);
+
+    for (i = 0; i < n; i++) {
+        int temp_x = x[i];
+        x[i] = round(x[i] * cos(radian) - y[i] * sin(radian));
+        y[i] = round(temp_x * sin(radian) + y[i] * cos(radian));
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x[] = {50, 100, 150, 50};
+    int y[] = {50, 50, 100, 150};
+    int n = sizeof(x) / sizeof(x[0]);
+
+    drawpoly(n, x, y);
+
+    rotate(x, y, n, 45);
+
+    setcolor(RED);
+    drawpoly(n, x, y);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3. Scaling:
+
+
+
+
+#include <graphics.h>
+
+void scale(int x[], int y[], int n, float sx, float sy) {
+    int i;
+
+    for (i = 0; i < n; i++) {
+        x[i] = round(x[i] * sx);
+        y[i] = round(y[i] * sy);
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x[] = {50, 100, 150, 50};
+    int y[] = {50, 50, 100, 150};
+    int n = sizeof(x) / sizeof(x[0]);
+
+    drawpoly(n, x, y);
+
+    scale(x, y, n, 1.5, 1.5);
+
+    setcolor(RED);
+    drawpoly(n, x, y);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. Reflection:
+
+
+
+#include <graphics.h>
+
+void reflect(int x[], int y[], int n, int rx, int ry) {
+    int i;
+
+    for (i = 0; i < n; i++) {
+        x[i] = x[i] * rx;
+        y[i] = y[i] * ry;
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x[] = {50, 100, 150, 50};
+    int y[] = {50, 50, 100, 150};
+    int n = sizeof(x) / sizeof(x[0]);
+
+    drawpoly(n, x, y);
+
+    reflect(x, y, n, -1, 1);
+
+    setcolor(RED);
+    drawpoly(n, x, y);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5. Shear:
+
+
+
+
+#include <graphics.h>
+
+void shear(int x[], int y[], int n, float shx, float shy) {
+    int i;
+
+    for (i = 0; i < n; i++) {
+        x[i] = x[i] + shx * y[i];
+        y[i] = y[i] + shy * x[i];
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x[] = {50, 100, 150, 50};
+    int y[] = {50, 50, 100, 150};
+    int n = sizeof(x) / sizeof(x[0]);
+
+    drawpoly(n, x, y);
+
+    shear(x, y, n, 0.5, 0);
+
+    setcolor(RED);
+    drawpoly(n, x, y);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+Two Dimensional transformations - Translation, Rotation, Scaling, Reflection, Shear
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Composite 2D Transformations
+
+
+
+
+
+
+#include <graphics.h>
+#include <math.h>
+
+void multiplyMatrix(int result[][3], int matrix1[][3], int matrix2[][3]) {
+    int i, j, k;
+    int temp[3][3];
+
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            temp[i][j] = 0;
+            for (k = 0; k < 3; k++) {
+                temp[i][j] += matrix1[i][k] * matrix2[k][j];
+            }
+        }
+    }
+
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            result[i][j] = temp[i][j];
+        }
+    }
+}
+
+void applyTransformation(int x[], int y[], int n, int transformationMatrix[][3]) {
+    int i, j;
+    int result[3];
+
+    for (i = 0; i < n; i++) {
+        result[0] = x[i];
+        result[1] = y[i];
+        result[2] = 1;
+
+        for (j = 0; j < 3; j++) {
+            x[i] = round(result[0] * transformationMatrix[0][j] +
+                         result[1] * transformationMatrix[1][j] +
+                         result[2] * transformationMatrix[2][j]);
+
+            y[i] = round(result[0] * transformationMatrix[0][j] +
+                         result[1] * transformationMatrix[1][j] +
+                         result[2] * transformationMatrix[2][j]);
+        }
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int x[] = {50, 100, 150, 50};
+    int y[] = {50, 50, 100, 150};
+    int n = sizeof(x) / sizeof(x[0]);
+
+    // Original figure
+    drawpoly(n, x, y);
+
+    // Translation matrix
+    int translationMatrix[][3] = {{1, 0, 50},
+                                  {0, 1, 50},
+                                  {0, 0, 1}};
+
+    // Rotation matrix
+    int rotationMatrix[][3] = {{cos(45), -sin(45), 0},
+                               {sin(45), cos(45), 0},
+                               {0, 0, 1}};
+
+    // Scaling matrix
+    int scalingMatrix[][3] = {{2, 0, 0},
+                              {0, 2, 0},
+                              {0, 0, 1}};
+
+    // Apply transformations
+    multiplyMatrix(rotationMatrix, translationMatrix, rotationMatrix);
+    multiplyMatrix(scalingMatrix, rotationMatrix, scalingMatrix);
+    
+    applyTransformation(x, y, n, scalingMatrix);
+
+    // Transformed figure
+    setcolor(RED);
+    drawpoly(n, x, y);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cohen Sutherland 2D line clipping and Windowing
+
+
+
+#include <graphics.h>
+
+#define INSIDE 0 // 0000
+#define LEFT 1   // 0001
+#define RIGHT 2  // 0010
+#define BOTTOM 4 // 0100
+#define TOP 8    // 1000
+
+int computeCode(int x, int y, int xmin, int ymin, int xmax, int ymax) {
+    int code = INSIDE;
+
+    if (x < xmin) {
+        code |= LEFT;
+    } else if (x > xmax) {
+        code |= RIGHT;
+    }
+
+    if (y < ymin) {
+        code |= BOTTOM;
+    } else if (y > ymax) {
+        code |= TOP;
+    }
+
+    return code;
+}
+
+void cohenSutherland(int x1, int y1, int x2, int y2, int xmin, int ymin, int xmax, int ymax) {
+    int code1 = computeCode(x1, y1, xmin, ymin, xmax, ymax);
+    int code2 = computeCode(x2, y2, xmin, ymin, xmax, ymax);
+
+    int accept = 0;
+
+    while (1) {
+        if (!(code1 | code2)) {
+            accept = 1;
+            break;
+        } else if (code1 & code2) {
+            break;
+        } else {
+            int x, y;
+
+            int codeOut = code1 ? code1 : code2;
+
+            if (codeOut & TOP) {
+                x = x1 + (x2 - x1) * (ymax - y1) / (y2 - y1);
+                y = ymax;
+            } else if (codeOut & BOTTOM) {
+                x = x1 + (x2 - x1) * (ymin - y1) / (y2 - y1);
+                y = ymin;
+            } else if (codeOut & RIGHT) {
+                y = y1 + (y2 - y1) * (xmax - x1) / (x2 - x1);
+                x = xmax;
+            } else if (codeOut & LEFT) {
+                y = y1 + (y2 - y1) * (xmin - x1) / (x2 - x1);
+                x = xmin;
+            }
+
+            if (codeOut == code1) {
+                x1 = x;
+                y1 = y;
+                code1 = computeCode(x1, y1, xmin, ymin, xmax, ymax);
+            } else {
+                x2 = x;
+                y2 = y;
+                code2 = computeCode(x2, y2, xmin, ymin, xmax, ymax);
+            }
+        }
+    }
+
+    if (accept) {
+        line(x1, y1, x2, y2);
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    int xmin = 50, ymin = 50, xmax = 200, ymax = 200;
+
+    rectangle(xmin, ymin, xmax, ymax);
+
+    int x1 = 30, y1 = 30, x2 = 250, y2 = 250;
+
+    line(x1, y1, x2, y2);
+
+    delay(1000);
+
+    cleardevice();
+
+    rectangle(xmin, ymin, xmax, ymax);
+
+    cohenSutherland(x1, y1, x2, y2, xmin, ymin, xmax, ymax);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sutherland – Hodgeman Polygon clipping Algorithm
+
+#include <graphics.h>
+#include <stdlib.h>
+
+#define MAX_POINTS 10
+
+struct Point {
+    int x, y;
+};
+
+void drawPolygon(struct Point poly[], int n) {
+    for (int i = 0; i < n; i++) {
+        line(poly[i].x, poly[i].y, poly[(i + 1) % n].x, poly[(i + 1) % n].y);
+    }
+}
+
+void sutherlandHodgman(struct Point poly[], int n, int xmin, int ymin, int xmax, int ymax) {
+    struct Point result[MAX_POINTS];
+    int i, j, k = 0;
+
+    for (i = 0; i < n; i++) {
+        struct Point P1 = poly[i];
+        struct Point P2 = poly[(i + 1) % n];
+
+        // If both endpoints are inside the window, add the second point to the result
+        if (P2.x >= xmin && P2.x <= xmax && P2.y >= ymin && P2.y <= ymax) {
+            result[k++] = P2;
+        }
+
+        // If the first point is inside the window, add it to the result
+        if (P1.x >= xmin && P1.x <= xmax && P1.y >= ymin && P1.y <= ymax) {
+            // If the second point is outside the window, add the intersection point
+            if (P2.y > ymax) {
+                result[k].x = P1.x + (P2.x - P1.x) * (ymax - P1.y) / (P2.y - P1.y);
+                result[k].y = ymax;
+                k++;
+            } else if (P2.y < ymin) {
+                result[k].x = P1.x + (P2.x - P1.x) * (ymin - P1.y) / (P2.y - P1.y);
+                result[k].y = ymin;
+                k++;
+            }
+            result[k++] = P1;
+        } else if (P2.x >= xmin && P2.x <= xmax && P2.y >= ymin && P2.y <= ymax) {
+            // If the first point is outside the window, add the intersection point
+            if (P1.y > ymax) {
+                result[k].x = P2.x + (P1.x - P2.x) * (ymax - P2.y) / (P1.y - P2.y);
+                result[k].y = ymax;
+                k++;
+            } else if (P1.y < ymin) {
+                result[k].x = P2.x + (P1.x - P2.x) * (ymin - P2.y) / (P1.y - P2.y);
+                result[k].y = ymin;
+                k++;
+            }
+        }
+    }
+
+    // Draw the clipped polygon
+    drawPolygon(result, k);
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    struct Point polygon[] = {{50, 150}, {200, 50}, {350, 150}, {200, 250}};
+    int n = sizeof(polygon) / sizeof(polygon[0]);
+
+    rectangle(100, 100, 300, 200);
+
+    drawPolygon(polygon, n);
+
+    delay(1000);
+
+    cleardevice();
+
+    rectangle(100, 100, 300, 200);
+
+    sutherlandHodgman(polygon, n, 100, 100, 300, 200);
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Three dimensional transformations - Translation, Rotation, Scaling
+
+
+
+1. Three-Dimensional Translation:
+
+#include <stdio.h>
+
+struct Point3D {
+    float x, y, z;
+};
+
+void translate3D(struct Point3D *point, float tx, float ty, float tz) {
+    point->x += tx;
+    point->y += ty;
+    point->z += tz;
+}
+
+int main() {
+    struct Point3D point = {1.0, 2.0, 3.0};
+
+    printf("Original Point: (%.2f, %.2f, %.2f)\n", point.x, point.y, point.z);
+
+    translate3D(&point, 2.0, 3.0, 1.0);
+
+    printf("Translated Point: (%.2f, %.2f, %.2f)\n", point.x, point.y, point.z);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+2. Three-Dimensional Rotation:
+
+#include <stdio.h>
+#include <math.h>
+
+struct Point3D {
+    float x, y, z;
+};
+
+void rotate3D(struct Point3D *point, float angleX, float angleY, float angleZ) {
+    float radX = angleX * (M_PI / 180.0);
+    float radY = angleY * (M_PI / 180.0);
+    float radZ = angleZ * (M_PI / 180.0);
+
+    float newX = point->x * cos(radZ) - point->y * sin(radZ);
+    float newY = point->x * sin(radZ) + point->y * cos(radZ);
+
+    float tempX = newX;
+    float tempY = newY * cos(radX) - point->z * sin(radX);
+    float tempZ = newY * sin(radX) + point->z * cos(radX);
+
+    point->x = tempX * cos(radY) + tempZ * sin(radY);
+    point->y = tempY;
+    point->z = -tempX * sin(radY) + tempZ * cos(radY);
+}
+
+int main() {
+    struct Point3D point = {1.0, 0.0, 0.0};
+
+    printf("Original Point: (%.2f, %.2f, %.2f)\n", point.x, point.y, point.z);
+
+    rotate3D(&point, 45.0, 30.0, 60.0);
+
+    printf("Rotated Point: (%.2f, %.2f, %.2f)\n", point.x, point.y, point.z);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+3. Three-Dimensional Scaling:
+
+#include <stdio.h>
+
+struct Point3D {
+    float x, y, z;
+};
+
+void scale3D(struct Point3D *point, float sx, float sy, float sz) {
+    point->x *= sx;
+    point->y *= sy;
+    point->z *= sz;
+}
+
+int main() {
+    struct Point3D point = {2.0, 3.0, 4.0};
+
+    printf("Original Point: (%.2f, %.2f, %.2f)\n", point.x, point.y, point.z);
+
+    scale3D(&point, 1.5, 0.5, 2.0);
+
+    printf("Scaled Point: (%.2f, %.2f, %.2f)\n", point.x, point.y, point.z);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Composite 3D transformations
+
+
+
+#include <stdio.h>
+#include <math.h>
+
+struct Point3D {
+    float x, y, z;
+};
+
+struct Matrix {
+    float m[4][4];
+};
+
+void printPoint(struct Point3D point) {
+    printf("(%.2f, %.2f, %.2f)\n", point.x, point.y, point.z);
+}
+
+void multiplyMatrix(struct Matrix *result, struct Matrix matrix1, struct Matrix matrix2) {
+    int i, j, k;
+    struct Matrix temp;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            temp.m[i][j] = 0;
+            for (k = 0; k < 4; k++) {
+                temp.m[i][j] += matrix1.m[i][k] * matrix2.m[k][j];
+            }
+        }
+    }
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            result->m[i][j] = temp.m[i][j];
+        }
+    }
+}
+
+void translate3D(struct Point3D *point, float tx, float ty, float tz) {
+    struct Matrix translationMatrix = {
+        {1, 0, 0, tx},
+        {0, 1, 0, ty},
+        {0, 0, 1, tz},
+        {0, 0, 0, 1}
+    };
+
+    struct Matrix pointMatrix = {
+        {point->x},
+        {point->y},
+        {point->z},
+        {1}
+    };
+
+    struct Matrix resultMatrix;
+    multiplyMatrix(&resultMatrix, translationMatrix, pointMatrix);
+
+    point->x = resultMatrix.m[0][0];
+    point->y = resultMatrix.m[1][0];
+    point->z = resultMatrix.m[2][0];
+}
+
+void rotate3D(struct Point3D *point, float angleX, float angleY, float angleZ) {
+    float radX = angleX * (M_PI / 180.0);
+    float radY = angleY * (M_PI / 180.0);
+    float radZ = angleZ * (M_PI / 180.0);
+
+    struct Matrix rotationX = {
+        {1, 0, 0, 0},
+        {0, cos(radX), -sin(radX), 0},
+        {0, sin(radX), cos(radX), 0},
+        {0, 0, 0, 1}
+    };
+
+    struct Matrix rotationY = {
+        {cos(radY), 0, sin(radY), 0},
+        {0, 1, 0, 0},
+        {-sin(radY), 0, cos(radY), 0},
+        {0, 0, 0, 1}
+    };
+
+    struct Matrix rotationZ = {
+        {cos(radZ), -sin(radZ), 0, 0},
+        {sin(radZ), cos(radZ), 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1}
+    };
+
+    struct Matrix pointMatrix = {
+        {point->x},
+        {point->y},
+        {point->z},
+        {1}
+    };
+
+    struct Matrix resultMatrix;
+
+    // Combine the rotation matrices
+    multiplyMatrix(&resultMatrix, rotationX, rotationY);
+    multiplyMatrix(&resultMatrix, resultMatrix, rotationZ);
+    multiplyMatrix(&resultMatrix, resultMatrix, pointMatrix);
+
+    point->x = resultMatrix.m[0][0];
+    point->y = resultMatrix.m[1][0];
+    point->z = resultMatrix.m[2][0];
+}
+
+void scale3D(struct Point3D *point, float sx, float sy, float sz) {
+    struct Matrix scaleMatrix = {
+        {sx, 0, 0, 0},
+        {0, sy, 0, 0},
+        {0, 0, sz, 0},
+        {0, 0, 0, 1}
+    };
+
+    struct Matrix pointMatrix = {
+        {point->x},
+        {point->y},
+        {point->z},
+        {1}
+    };
+
+    struct Matrix resultMatrix;
+    multiplyMatrix(&resultMatrix, scaleMatrix, pointMatrix);
+
+    point->x = resultMatrix.m[0][0];
+    point->y = resultMatrix.m[1][0];
+    point->z = resultMatrix.m[2][0];
+}
+
+int main() {
+    struct Point3D point = {1.0, 2.0, 3.0};
+
+    printf("Original Point: ");
+    printPoint(point);
+
+    translate3D(&point, 2.0, 3.0, 1.0);
+    printf("Translated Point: ");
+    printPoint(point);
+
+    rotate3D(&point, 45.0, 30.0, 60.0);
+    printf("Rotated Point: ");
+    printPoint(point);
+
+    scale3D(&point, 1.5, 0.5, 2.0);
+    printf("Scaled Point: ");
+    printPoint(point);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Drawing three dimensional objects and Scenes
+
+
+#include <GL/glut.h>
+
+float angleX = 0.0;
+float angleY = 0.0;
+
+void drawCube() {
+    glutWireCube(1.0);
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glLoadIdentity();
+    glTranslatef(0.0f, 0.0f, -5.0f);
+    glRotatef(angleX, 1.0, 0.0, 0.0);
+    glRotatef(angleY, 0.0, 1.0, 0.0);
+
+    glColor3f(0.0, 1.0, 0.0);  // Set color to green
+    drawCube();
+
+    glutSwapBuffers();
+}
+
+void reshape(int width, int height) {
+    glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, (GLfloat)width / (GLfloat)height, 1.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+        case 'q':
+        case 27:  // ESC
+            exit(0);
+            break;
+    }
+}
+
+void specialKeys(int key, int x, int y) {
+    switch (key) {
+        case GLUT_KEY_UP:
+            angleX += 5.0;
+            break;
+        case GLUT_KEY_DOWN:
+            angleX -= 5.0;
+            break;
+        case GLUT_KEY_LEFT:
+            angleY -= 5.0;
+            break;
+        case GLUT_KEY_RIGHT:
+            angleY += 5.0;
+            break;
+    }
+
+    glutPostRedisplay();
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutCreateWindow("3D Cube Example");
+    glEnable(GL_DEPTH_TEST);
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(specialKeys);
+    glutMainLoop();
+    return 0;
+}
+
+
+
+
+
+
+
+======================================================
+gcc -o cubeExample cubeExample.c -lglut -lGLU -lGL
+======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Generating Fractal images
+@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+#include <graphics.h>
+#include <conio.h>
+
+#define WIDTH 800
+#define HEIGHT 800
+#define MAX_ITER 1000
+
+void drawMandelbrot() {
+    for (int x = 0; x < WIDTH; x++) {
+        for (int y = 0; y < HEIGHT; y++) {
+            double zx, zy, cX, cY, tmp;
+            int iter;
+
+            zx = zy = 0;
+            cX = (x - WIDTH / 2.0) * 4.0 / WIDTH;
+            cY = (y - HEIGHT / 2.0) * 4.0 / HEIGHT;
+
+            iter = 0;
+
+            while (zx * zx + zy * zy < 4.0 && iter < MAX_ITER) {
+                tmp = zx * zx - zy * zy + cX;
+                zy = 2.0 * zx * zy + cY;
+                zx = tmp;
+                iter++;
+            }
+
+            // Map the iteration count to a color
+            int color = iter % 16; // You can customize the color mapping here
+
+            putpixel(x, y, color);
+        }
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "C:\\Turboc3\\BGI");
+
+    drawMandelbrot();
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
